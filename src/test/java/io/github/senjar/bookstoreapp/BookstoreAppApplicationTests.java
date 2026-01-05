@@ -1,4 +1,4 @@
-package io.github.senjar.bookstore_app;
+package io.github.senjar.bookstoreapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
