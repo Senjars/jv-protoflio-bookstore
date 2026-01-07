@@ -3,6 +3,7 @@ package io.github.senjar.bookstoreapp.controller;
 import io.github.senjar.bookstoreapp.dto.BookDto;
 import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.service.BookService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/books")
+@RequestMapping("/api/books")
 public class BookController {
 
     private final BookService bookService;
@@ -33,8 +34,9 @@ public class BookController {
         return bookService.getBookById(id);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public BookDto createBook(@RequestBody CreateBookRequestDto bookRequestDto) {
+    public BookDto createBook(@Valid @RequestBody CreateBookRequestDto bookRequestDto) {
         return bookService.save(bookRequestDto);
     }
 
@@ -45,7 +47,8 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public BookDto updateBook(@RequestBody CreateBookRequestDto requestDto, @PathVariable Long id) {
+    public BookDto updateBook(@Valid @RequestBody CreateBookRequestDto requestDto,
+                              @PathVariable Long id) {
         return bookService.update(requestDto, id);
     }
 }
