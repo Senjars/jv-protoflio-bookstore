@@ -1,11 +1,18 @@
 package io.github.senjar.bookstoreapp.service;
 
-import io.github.senjar.bookstoreapp.model.Book;
+import io.github.senjar.bookstoreapp.dto.BookDto;
+import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
 import java.util.List;
 
 public interface BookService {
 
-    Book save(Book book);
+    BookDto save(CreateBookRequestDto bookRequestDto);
 
-    List<Book> findAll();
+    List<BookDto> findAll();
+
+    BookDto getBookById(Long id);
+
+    void deleteById(Long id);
+
+    BookDto update(CreateBookRequestDto requestDto, Long id);
 }
