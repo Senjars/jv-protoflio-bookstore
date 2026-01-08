@@ -1,6 +1,7 @@
 package io.github.senjar.bookstoreapp.controller;
 
 import io.github.senjar.bookstoreapp.dto.BookDto;
+import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.service.BookService;
 import jakarta.validation.Valid;
@@ -50,5 +51,10 @@ public class BookController {
     public BookDto updateBook(@Valid @RequestBody CreateBookRequestDto requestDto,
                               @PathVariable Long id) {
         return bookService.update(requestDto, id);
+    }
+
+    @GetMapping("/search")
+    public List<BookDto> search(BookSearchParametersDto bookSearchParameters) {
+        return bookService.search(bookSearchParameters);
     }
 }
