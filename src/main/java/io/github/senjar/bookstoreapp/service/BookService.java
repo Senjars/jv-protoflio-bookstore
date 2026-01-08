@@ -1,8 +1,8 @@
 package io.github.senjar.bookstoreapp.service;
 
 import io.github.senjar.bookstoreapp.dto.BookDto;
+import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
-import io.github.senjar.bookstoreapp.repository.book.BookSearchParameters;
 import java.util.List;
 
 public interface BookService {
@@ -17,5 +17,5 @@ public interface BookService {
 
     BookDto update(CreateBookRequestDto requestDto, Long id);
 
-    List<BookDto> search(BookSearchParameters searchParameters);
+    List<BookDto> search(BookSearchParametersDto searchParameters);
 }

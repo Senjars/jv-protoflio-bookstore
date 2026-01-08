@@ -1,8 +1,8 @@
 package io.github.senjar.bookstoreapp.controller;
 
 import io.github.senjar.bookstoreapp.dto.BookDto;
+import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
-import io.github.senjar.bookstoreapp.repository.book.BookSearchParameters;
 import io.github.senjar.bookstoreapp.service.BookService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -54,7 +54,7 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public List<BookDto> search(BookSearchParameters bookSearchParameters) {
+    public List<BookDto> search(BookSearchParametersDto bookSearchParameters) {
         return bookService.search(bookSearchParameters);
     }
 }

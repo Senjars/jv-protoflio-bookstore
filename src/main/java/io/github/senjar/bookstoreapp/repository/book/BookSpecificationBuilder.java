@@ -1,5 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.book;
 
+import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.model.Book;
 import io.github.senjar.bookstoreapp.repository.SpecificationBuilder;
 import io.github.senjar.bookstoreapp.repository.SpecificationProviderManager;
@@ -9,12 +10,13 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
+public class BookSpecificationBuilder implements
+        SpecificationBuilder<Book, BookSearchParametersDto> {
 
     private final SpecificationProviderManager<Book> specificationProviderManager;
 
     @Override
-    public Specification<Book> build(BookSearchParameters bookSearchParameters) {
+    public Specification<Book> build(BookSearchParametersDto bookSearchParameters) {
 
         Specification<Book> spec = Specification.where(null);
         if (bookSearchParameters.title() != null && bookSearchParameters.title().length > 0) {

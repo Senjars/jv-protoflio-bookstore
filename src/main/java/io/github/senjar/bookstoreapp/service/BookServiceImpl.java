@@ -1,12 +1,12 @@
 package io.github.senjar.bookstoreapp.service;
 
 import io.github.senjar.bookstoreapp.dto.BookDto;
+import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
 import io.github.senjar.bookstoreapp.mapper.BookMapper;
 import io.github.senjar.bookstoreapp.model.Book;
 import io.github.senjar.bookstoreapp.repository.book.BookRepository;
-import io.github.senjar.bookstoreapp.repository.book.BookSearchParameters;
 import io.github.senjar.bookstoreapp.repository.book.BookSpecificationBuilder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +59,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> search(BookSearchParameters searchParameters) {
+    public List<BookDto> search(BookSearchParametersDto searchParameters) {
         Specification<Book> bookSpecification = bookSpecificationBuilder.build(searchParameters);
 
         return bookRepository.findAll(bookSpecification)
