@@ -4,9 +4,15 @@ import io.github.senjar.bookstoreapp.dto.BookDto;
 import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.service.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "books", description = "Operations for managing books")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/books")
@@ -26,35 +33,84 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public List<BookDto> getAll() {
-        return bookService.findAll();
+    @Operation(
+            summary = "Get all books",
+            description = "Returns a list of all books",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Books found"),
+            }
+    )
+    public Page<BookDto> getAll(
+            @ParameterObject
+            @PageableDefault(size = 20, sort = "title") Pageable pageable) {
+        return bookService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
+    @Operation(
+            summary = "Get a book by ID",
+            description = "Returns a single book with all details.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Book found"),
+                    @ApiResponse(responseCode = "404", description = "Book not found")
+            }
+    )
     public BookDto getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @Operation(
+            summary = "Create a book",
+            description = "Creates a single book",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Book created"),
+            }
+    )
     public BookDto createBook(@Valid @RequestBody CreateBookRequestDto bookRequestDto) {
         return bookService.save(bookRequestDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Delete a book by ID",
+            description = "Deletes a single book",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Book has been deleted"),
+                    @ApiResponse(responseCode = "404", description = "Could not delete the book")
+            }
+    )
     public void deleteBookById(@PathVariable Long id) {
         bookService.deleteById(id);
     }
 
     @PutMapping("/{id}")
+    @Operation(
+            summary = "Update a book by ID",
+            description = "Updates details of a book",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Book updated"),
+                    @ApiResponse(responseCode = "404", description = "Failed to update the book")
+            }
+    )
     public BookDto updateBook(@Valid @RequestBody CreateBookRequestDto requestDto,
                               @PathVariable Long id) {
         return bookService.update(requestDto, id);
     }
 
     @GetMapping("/search")
-    public List<BookDto> search(BookSearchParametersDto bookSearchParameters) {
-        return bookService.search(bookSearchParameters);
+    @Operation(
+            summary = "Search for books by title, author or ISBN",
+            description = "Finds books by title, author or ISBN.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Books found"),
+            }
+    )
+    public Page<BookDto> search(@ParameterObject BookSearchParametersDto bookSearchParameters,
+                                @ParameterObject
+                                @PageableDefault(size = 20, sort = "title") Pageable pageable) {
+        return bookService.search(bookSearchParameters, pageable);
     }
 }
