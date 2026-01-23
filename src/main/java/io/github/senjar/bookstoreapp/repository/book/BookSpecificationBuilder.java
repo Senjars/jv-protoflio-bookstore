@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.book;
 
-import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
+import io.github.senjar.bookstoreapp.dto.book.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.model.Book;
 import io.github.senjar.bookstoreapp.repository.SpecificationBuilder;
 import io.github.senjar.bookstoreapp.repository.SpecificationProviderManager;

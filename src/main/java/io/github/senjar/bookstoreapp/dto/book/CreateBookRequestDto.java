@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.dto;
+package io.github.senjar.bookstoreapp.dto.book;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

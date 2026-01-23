@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changes/add-book-table.sql
+  - include:
+      file: db/changelog/changes/add-user-table.sql
