@@ -1,8 +1,8 @@
 package io.github.senjar.bookstoreapp.service;
 
-import io.github.senjar.bookstoreapp.dto.BookDto;
-import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
-import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
+import io.github.senjar.bookstoreapp.dto.book.BookDto;
+import io.github.senjar.bookstoreapp.dto.book.BookSearchParametersDto;
+import io.github.senjar.bookstoreapp.dto.book.CreateBookRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

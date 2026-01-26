@@ -1,8 +1,8 @@
 package io.github.senjar.bookstoreapp.controller;
 
-import io.github.senjar.bookstoreapp.dto.BookDto;
-import io.github.senjar.bookstoreapp.dto.BookSearchParametersDto;
-import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
+import io.github.senjar.bookstoreapp.dto.book.BookDto;
+import io.github.senjar.bookstoreapp.dto.book.BookSearchParametersDto;
+import io.github.senjar.bookstoreapp.dto.book.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

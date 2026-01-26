@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.dto;
+package io.github.senjar.bookstoreapp.dto.book;
 
 import java.math.BigDecimal;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package io.github.senjar.bookstoreapp.mapper;
 
-import io.github.senjar.bookstoreapp.dto.BookDto;
-import io.github.senjar.bookstoreapp.dto.CreateBookRequestDto;
+import io.github.senjar.bookstoreapp.dto.book.BookDto;
+import io.github.senjar.bookstoreapp.dto.book.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.model.Book;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
