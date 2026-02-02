@@ -11,3 +11,6 @@ CREATE TABLE users (
     PRIMARY KEY (id),
     UNIQUE (email)
     )
+
+--changeset senjar:3
+ALTER TABLE users ADD COLUMN role VARCHAR(255) NOT NULL DEFAULT 'ROLE_USER';
