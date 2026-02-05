@@ -26,10 +26,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-                  value: ROLE_USER
+                  value: ROLE_ADMIN
         - insert:
             tableName: roles
             columns:
               - column:
                   name: name
-                  value: ROLE_ADMIN
+                  value: ROLE_USER
