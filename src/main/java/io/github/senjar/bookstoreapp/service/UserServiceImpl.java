@@ -11,6 +11,7 @@ import io.github.senjar.bookstoreapp.repository.role.RoleRepository;
 import io.github.senjar.bookstoreapp.repository.user.UserRepository;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -32,7 +34,9 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toModel(requestDto);
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER.name())
                 .orElseThrow(() -> new RegistrationException("Can't find role by name"));
+
         user.setRoles(Set.of(userRole));
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         User savedUser = userRepository.save(user);
 
         return userMapper.toResponseDto(savedUser);
