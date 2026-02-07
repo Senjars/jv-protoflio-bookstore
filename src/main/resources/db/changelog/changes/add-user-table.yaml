@@ -46,7 +46,7 @@ databaseChangeLog:
             columns:
               - column: {name: id, value: 1}
               - column: {name: email, value: "jane@bookstore.com"}
-              - column: {name: password, value: "$2a$10$7P2F2sW8E1v8X.g.fR/LBe6VnK1Y6k9F7uG/Yp3E1p8l6I.k5B8R."}
+              - column: {name: password, value: "$2a$10$xKK9yaWube5bOnmMUvAcbuI.xMrQfSZliVw5CnMNmkWhr9GgxAlm6"}
               - column: {name: first_name, value: "Jane"}
               - column: {name: last_name, value: "Doe"}
               - column: {name: shipping_address, value: "321 Rose Avenue, London"}
@@ -55,7 +55,7 @@ databaseChangeLog:
             columns:
               - column: {name: id, value: 2}
               - column: {name: email, value: "john@bookstore.com"}
-              - column: {name: password, value: "$2a$10$7P2F2sW8E1v8X.g.fR/LBe6VnK1Y6k9F7uG/Yp3E1p8l6I.k5B8R."}
+              - column: {name: password, value: "$2a$10$xKK9yaWube5bOnmMUvAcbuI.xMrQfSZliVw5CnMNmkWhr9GgxAlm6"}
               - column: {name: first_name, value: "John"}
               - column: {name: last_name, value: "Doe"}
               - column: {name: shipping_address, value: "456 Oak Avenue, London"}
