@@ -1,6 +1,7 @@
 package io.github.senjar.bookstoreapp.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -33,12 +34,15 @@ public class JwtUtil {
     }
 
     public boolean isValidToken(String token) {
-        Jws<Claims> claimsJws = Jwts.parser()
-                .verifyWith(secret)
-                .build()
-                .parseSignedClaims(token);
-
-        return !claimsJws.getPayload().getExpiration().before(new Date());
+        try {
+            Jws<Claims> claimsJws = Jwts.parser()
+                    .verifyWith(secret)
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        } catch (ExpiredJwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     public String getUserName(String token) {

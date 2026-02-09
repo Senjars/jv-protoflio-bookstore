@@ -39,7 +39,7 @@ public class BookController {
             summary = "Get all books",
             description = "Returns a list of all books",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Books found"),
+                    @ApiResponse(responseCode = "200", description = "Books found")
             }
     )
     public Page<BookDto> getAll(
@@ -69,7 +69,7 @@ public class BookController {
             summary = "Create a book",
             description = "Creates a single book",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Book created"),
+                    @ApiResponse(responseCode = "201", description = "Book created")
             }
     )
     public BookDto createBook(@Valid @RequestBody CreateBookRequestDto bookRequestDto) {

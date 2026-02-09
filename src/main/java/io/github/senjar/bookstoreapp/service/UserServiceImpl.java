@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("Can't register");
         }
 
-        User user = userMapper.toModel(requestDto);
+        User user = userMapper.toEntity(requestDto);
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER.name())
                 .orElseThrow(() -> new RegistrationException("Can't find role by name"));
 
