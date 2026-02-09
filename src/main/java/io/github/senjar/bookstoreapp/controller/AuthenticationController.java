@@ -1,8 +1,11 @@
 package io.github.senjar.bookstoreapp.controller;
 
+import io.github.senjar.bookstoreapp.dto.user.UserLoginRequestDto;
+import io.github.senjar.bookstoreapp.dto.user.UserLoginResponseDto;
 import io.github.senjar.bookstoreapp.dto.user.UserRegistrationRequestDto;
 import io.github.senjar.bookstoreapp.dto.user.UserResponseDto;
 import io.github.senjar.bookstoreapp.exception.RegistrationException;
+import io.github.senjar.bookstoreapp.security.AuthenticationService;
 import io.github.senjar.bookstoreapp.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +20,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/registration")
     public UserResponseDto registerUser(@RequestBody @Valid UserRegistrationRequestDto requestDto)
             throws RegistrationException {
 
         return userService.register(requestDto);
+    }
+
+    @PostMapping("/login")
+    public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto requestDto) {
+        return authenticationService.authenticate(requestDto);
     }
 
 }
