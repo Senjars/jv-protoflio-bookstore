@@ -1,5 +1,7 @@
 package io.github.senjar.bookstoreapp.security;
 
+import static org.springframework.util.StringUtils.hasText;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -44,9 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getToken(HttpServletRequest request) {
-        String bearerToker = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToker) && bearerToker.startsWith("Bearer")) {
-            return bearerToker.substring(7);
+        String header = request.getHeader("Authorization");
+
+        if (hasText(header) && header.startsWith("Bearer ")) {
+            return header.substring(7).trim();
         }
         return null;
     }
