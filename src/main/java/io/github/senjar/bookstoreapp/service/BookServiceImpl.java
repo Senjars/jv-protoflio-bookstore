@@ -6,8 +6,13 @@ import io.github.senjar.bookstoreapp.dto.book.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
 import io.github.senjar.bookstoreapp.mapper.BookMapper;
 import io.github.senjar.bookstoreapp.model.Book;
+import io.github.senjar.bookstoreapp.model.Category;
 import io.github.senjar.bookstoreapp.repository.book.BookRepository;
 import io.github.senjar.bookstoreapp.repository.book.BookSpecificationBuilder;
+import io.github.senjar.bookstoreapp.repository.category.CategoryRepository;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +26,27 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public BookDto save(CreateBookRequestDto bookRequestDto) {
         Book book = bookMapper.toEntity(bookRequestDto);
+        Set<Long> categoryIds = bookRequestDto.getCategoryIds();
+        List<Category> categoryList = categoryRepository.findAllById(categoryIds);
+
+        if (categoryIds.size() != categoryList.size()) {
+            List<Long> foundIds = categoryList.stream()
+                    .map(Category::getId)
+                    .toList();
+
+            List<Long> missingIds = categoryIds.stream()
+                    .filter(id -> !foundIds.contains(id))
+                    .toList();
+
+            throw new EntityNotFoundException("Could not find categories with ids: " + missingIds);
+        }
+
+        book.setCategories(new HashSet<>(categoryList));
         Book savedBook = bookRepository.save(book);
         return bookMapper.toDto(savedBook);
     }

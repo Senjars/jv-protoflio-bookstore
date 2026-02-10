@@ -40,7 +40,6 @@ public class CategoryController {
             }
     )
     public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
-        System.out.println("SUKCES: Wszedłem do metody!");
         return categoryService.save(categoryDto);
     }
 
@@ -114,7 +113,7 @@ public class CategoryController {
             }
     )
     public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(
-            @PathVariable Long id, @PageableDefault(size = 20, sort = "name") Pageable pageable) {
+            @PathVariable Long id, @PageableDefault(size = 20, sort = "title") Pageable pageable) {
         return categoryService.findBooksByCategoriesId(id, pageable);
     }
 }
