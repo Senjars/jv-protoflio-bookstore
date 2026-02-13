@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.service;
+package io.github.senjar.bookstoreapp.service.impl;
 
 import io.github.senjar.bookstoreapp.dto.user.UserRegistrationRequestDto;
 import io.github.senjar.bookstoreapp.dto.user.UserResponseDto;
@@ -9,10 +9,12 @@ import io.github.senjar.bookstoreapp.model.RoleName;
 import io.github.senjar.bookstoreapp.model.User;
 import io.github.senjar.bookstoreapp.repository.role.RoleRepository;
 import io.github.senjar.bookstoreapp.repository.user.UserRepository;
+import io.github.senjar.bookstoreapp.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
             throws RegistrationException {

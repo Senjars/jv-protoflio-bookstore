@@ -51,7 +51,7 @@ public class Book {
     @Column(name = "cover_image")
     private String coverImage;
 
-    @Column(nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
     @Column(precision = 10, scale = 2, nullable = false)
