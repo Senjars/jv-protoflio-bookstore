@@ -2,6 +2,7 @@ package io.github.senjar.bookstoreapp.controller;
 
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ItemRequestDto;
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ShoppingCartDto;
+import io.github.senjar.bookstoreapp.dto.shoppingcart.UpdateQuantityRequestDto;
 import io.github.senjar.bookstoreapp.model.User;
 import io.github.senjar.bookstoreapp.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "shopping cart", description = "Operations for managing shopping cart")
@@ -30,6 +33,7 @@ public class ShoppingCartController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/cart-items/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(
             summary = "Remove cart item",
             description = "Removes a single item from the shopping cart",
@@ -72,13 +76,15 @@ public class ShoppingCartController {
     )
     public ShoppingCartDto updateItemQuantity(Authentication authentication,
                                               @PathVariable(name = "id") Long itemId,
-                                              @Valid @RequestBody int number) {
+                                              @Valid @RequestBody
+                                                  UpdateQuantityRequestDto request) {
         User user = (User) authentication.getPrincipal();
-        return shoppingCartService.updateItemQuantity(user.getId(), itemId, number);
+        return shoppingCartService.updateItemQuantity(user.getId(), itemId, request.quantity());
     }
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Add a product to the shopping cart",
             description = "Adds a single product to the shopping cart",

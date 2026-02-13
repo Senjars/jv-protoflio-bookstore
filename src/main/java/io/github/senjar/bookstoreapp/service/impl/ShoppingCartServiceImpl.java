@@ -2,6 +2,7 @@ package io.github.senjar.bookstoreapp.service.impl;
 
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ItemRequestDto;
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ShoppingCartDto;
+import io.github.senjar.bookstoreapp.exception.AccessDeniedException;
 import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
 import io.github.senjar.bookstoreapp.mapper.ShoppingCartMapper;
 import io.github.senjar.bookstoreapp.model.Book;
@@ -33,7 +34,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 () -> new EntityNotFoundException("Can't find item with id: " + cartItemId));
 
         if (!cartItem.getShoppingCart().getUser().getId().equals(userId)) {
-            throw new RuntimeException("You can only remove items from your own cart");
+            throw new AccessDeniedException("You can only access your own cart items");
         }
         cartItemRepository.delete(cartItem);
     }
@@ -56,7 +57,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow();
 
         if (!cartItem.getShoppingCart().getUser().getId().equals(userId)) {
-            throw new RuntimeException("You can only update your own cart");
+            throw new AccessDeniedException("You can only access your own cart items");
         }
 
         cartItem.setQuantity(number);
@@ -75,19 +76,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 });
 
         cart.getCartItems().stream()
-                .filter(item -> item.getBook().getId().equals(itemRequest.productId()))
+                .filter(item -> item.getBook().getId().equals(itemRequest.bookId()))
                 .findFirst()
                 .ifPresentOrElse(existingItem -> existingItem.setQuantity(
                         existingItem.getQuantity() + itemRequest.quantity()),
                         () -> {
-                            Book book = bookRepository.findById(itemRequest.productId())
+                            Book book = bookRepository.findById(itemRequest.bookId())
                                     .orElseThrow();
                             CartItem newItem = new CartItem();
                             newItem.setShoppingCart(cart);
                             newItem.setBook(book);
                             newItem.setQuantity(itemRequest.quantity());
                             cart.getCartItems().add(newItem);
-                            cartItemRepository.save(newItem);
                         });
         return shoppingCartMapper.toDto(cart);
     }
