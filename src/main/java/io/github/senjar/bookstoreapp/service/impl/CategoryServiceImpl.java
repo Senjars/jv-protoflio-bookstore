@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.service;
+package io.github.senjar.bookstoreapp.service.impl;
 
 import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import io.github.senjar.bookstoreapp.dto.category.CategoryDto;
@@ -8,10 +8,12 @@ import io.github.senjar.bookstoreapp.mapper.CategoryMapper;
 import io.github.senjar.bookstoreapp.model.Category;
 import io.github.senjar.bookstoreapp.repository.book.BookRepository;
 import io.github.senjar.bookstoreapp.repository.category.CategoryRepository;
+import io.github.senjar.bookstoreapp.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
                         () -> new EntityNotFoundException("Can't find category by id: " + id)));
     }
 
+    @Transactional
     @Override
     public CategoryDto save(CategoryDto categoryDto) {
         Category category = categoryMapper.toEntity(categoryDto);
@@ -42,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toDto(savedCategory);
     }
 
+    @Transactional
     @Override
     public CategoryDto update(Long id, CategoryDto categoryDto) {
         Category category = categoryRepository.findById(id).orElseThrow(
@@ -52,6 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         if (!categoryRepository.existsById(id)) {

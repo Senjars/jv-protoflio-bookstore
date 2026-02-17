@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.service;
+package io.github.senjar.bookstoreapp.service.impl;
 
 import io.github.senjar.bookstoreapp.dto.book.BookDto;
 import io.github.senjar.bookstoreapp.dto.book.BookSearchParametersDto;
@@ -10,6 +10,7 @@ import io.github.senjar.bookstoreapp.model.Category;
 import io.github.senjar.bookstoreapp.repository.book.BookRepository;
 import io.github.senjar.bookstoreapp.repository.book.BookSpecificationBuilder;
 import io.github.senjar.bookstoreapp.repository.category.CategoryRepository;
+import io.github.senjar.bookstoreapp.service.BookService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -28,6 +30,7 @@ public class BookServiceImpl implements BookService {
     private final BookSpecificationBuilder bookSpecificationBuilder;
     private final CategoryRepository categoryRepository;
 
+    @Transactional
     @Override
     public BookDto save(CreateBookRequestDto bookRequestDto) {
         Book book = bookMapper.toEntity(bookRequestDto);
@@ -63,6 +66,7 @@ public class BookServiceImpl implements BookService {
                 () -> new EntityNotFoundException("Can't find book by id: " + id)));
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         if (!bookRepository.existsById(id)) {
@@ -72,6 +76,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public BookDto update(CreateBookRequestDto requestDto, Long id) {
         Book book = bookRepository.findById(id).orElseThrow(
