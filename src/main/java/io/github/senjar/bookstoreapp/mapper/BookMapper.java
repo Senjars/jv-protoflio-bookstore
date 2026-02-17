@@ -14,7 +14,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
 
-    @Mapping(target = "categoryIds", source = "categories")
+    @Mapping(target = "categoryIds", ignore = true)
     BookDto toDto(Book book);
 
     default Long mapCategoryToId(Category category) {

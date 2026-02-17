@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toEntity(requestDto);
-        Role userRole = roleRepository.findByName(RoleName.ROLE_USER.name())
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RegistrationException("Can't find role by name"));
 
         user.setRoles(Set.of(userRole));

@@ -43,7 +43,7 @@ public class ShoppingCartController {
                     @ApiResponse(responseCode = "404", description = "Cart item not found")
             }
     )
-    public void removeCartItem(Authentication authentication,@PathVariable Long id) {
+    public void removeCartItem(Authentication authentication, @PathVariable Long id) {
         User user = (User) authentication.getPrincipal();
         shoppingCartService.removeCartItem(user.getId(), id);
     }

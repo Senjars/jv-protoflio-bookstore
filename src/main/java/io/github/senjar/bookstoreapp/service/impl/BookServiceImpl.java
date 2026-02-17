@@ -30,8 +30,8 @@ public class BookServiceImpl implements BookService {
     private final BookSpecificationBuilder bookSpecificationBuilder;
     private final CategoryRepository categoryRepository;
 
-    @Transactional
     @Override
+    @Transactional
     public BookDto save(CreateBookRequestDto bookRequestDto) {
         Book book = bookMapper.toEntity(bookRequestDto);
         Set<Long> categoryIds = bookRequestDto.getCategoryIds();
@@ -55,19 +55,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<BookDto> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable)
                 .map(bookMapper::toDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookDto getBookById(Long id) {
         return bookMapper.toDto(bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find book by id: " + id)));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void deleteById(Long id) {
         if (!bookRepository.existsById(id)) {
             throw new EntityNotFoundException("Can't delete book. Book with id "
@@ -76,8 +78,8 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    @Transactional
     @Override
+    @Transactional
     public BookDto update(CreateBookRequestDto requestDto, Long id) {
         Book book = bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find book by id: " + id));
@@ -87,6 +89,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<BookDto> search(BookSearchParametersDto searchParameters, Pageable pageable) {
         Specification<Book> bookSpecification = bookSpecificationBuilder.build(searchParameters);
 

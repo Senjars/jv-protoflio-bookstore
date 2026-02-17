@@ -28,6 +28,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
 
+    @Override
     @Transactional
     public void removeCartItem(Long userId, Long cartItemId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
@@ -39,22 +40,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItemRepository.delete(cartItem);
     }
 
-    @Transactional
+    @Override
+    @Transactional(readOnly = true)
     public ShoppingCartDto showCartItems(Long userId) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    ShoppingCart cart = new ShoppingCart();
-                    User user = userRepository.findById(userId).orElseThrow(
-                            () -> new EntityNotFoundException("User not found"));
-                    cart.setUser(user);
-                    return shoppingCartRepository.save(cart);
-                });
-        return shoppingCartMapper.toDto(shoppingCart);
+        ShoppingCart cart = getOrCreateCart(userId);
+        return shoppingCartMapper.toDto(cart);
     }
 
+    @Override
     @Transactional
     public ShoppingCartDto updateItemQuantity(Long userId, Long cartItemId, int number) {
-        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow();
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(
+                () -> new EntityNotFoundException("Can't find item with id: " + cartItemId));
 
         if (!cartItem.getShoppingCart().getUser().getId().equals(userId)) {
             throw new AccessDeniedException("You can only access your own cart items");
@@ -64,16 +61,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.toDto(cartItem.getShoppingCart());
     }
 
+    @Override
     @Transactional
     public ShoppingCartDto addToShoppingCart(Long userId, ItemRequestDto itemRequest) {
-        ShoppingCart cart = shoppingCartRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    ShoppingCart newShoppingCart = new ShoppingCart();
-                    User user = userRepository.findById(userId)
-                            .orElseThrow(() -> new EntityNotFoundException("User not found"));
-                    newShoppingCart.setUser(user);
-                    return shoppingCartRepository.save(newShoppingCart);
-                });
+        ShoppingCart cart = getOrCreateCart(userId);
 
         cart.getCartItems().stream()
                 .filter(item -> item.getBook().getId().equals(itemRequest.bookId()))
@@ -82,7 +73,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                         existingItem.getQuantity() + itemRequest.quantity()),
                         () -> {
                             Book book = bookRepository.findById(itemRequest.bookId())
-                                    .orElseThrow();
+                                    .orElseThrow(() -> new EntityNotFoundException(
+                                            "Can't find book with id: " + itemRequest.bookId()));
+
                             CartItem newItem = new CartItem();
                             newItem.setShoppingCart(cart);
                             newItem.setBook(book);
@@ -90,5 +83,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                             cart.getCartItems().add(newItem);
                         });
         return shoppingCartMapper.toDto(cart);
+    }
+
+    @Transactional
+    public ShoppingCart getOrCreateCart(Long userId) {
+        return shoppingCartRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    ShoppingCart cart = new ShoppingCart();
+                    User user = userRepository.findById(userId).orElseThrow(
+                            () -> new EntityNotFoundException("User not found"));
+                    cart.setUser(user);
+                    return shoppingCartRepository.save(cart);
+                });
     }
 }
