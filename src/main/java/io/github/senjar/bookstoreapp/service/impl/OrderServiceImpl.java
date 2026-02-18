@@ -14,7 +14,6 @@ import io.github.senjar.bookstoreapp.model.ShoppingCart;
 import io.github.senjar.bookstoreapp.model.Status;
 import io.github.senjar.bookstoreapp.repository.order.OrderItemRepository;
 import io.github.senjar.bookstoreapp.repository.order.OrderRepository;
-import io.github.senjar.bookstoreapp.repository.shoppingcart.ShoppingCartRepository;
 import io.github.senjar.bookstoreapp.service.OrderService;
 import io.github.senjar.bookstoreapp.service.ShoppingCartService;
 import java.math.BigDecimal;
@@ -36,7 +35,6 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository itemRepository;
     private final OrderItemMapper orderItemMapper;
     private final ShoppingCartService shoppingCartService;
-    private final ShoppingCartRepository shoppingCartRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -63,12 +61,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrderItemDto getItemInfo(Long userId, Long itemId) {
+    public OrderItemDto getItemInfo(Long userId, Long orderId, Long itemId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new EntityNotFoundException("Order with id: " + orderId + " not found"));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new AccessDeniedException("You can access your own orders");
+        }
+
         OrderItem orderItem = itemRepository.findById(itemId).orElseThrow(
                 () -> new EntityNotFoundException("Item with id: " + itemId + " not found"));
 
-        if (!orderItem.getOrder().getUser().getId().equals(userId)) {
-            throw new AccessDeniedException("You can only access your orders");
+        if (!orderItem.getOrder().getId().equals(orderId)) {
+            throw new AccessDeniedException("Item with id " + itemId + " is not part of order "
+                    + orderId);
         }
 
         return orderItemMapper.toDto(orderItem);
@@ -108,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotal(totalPrice);
         Order savedOrder = orderRepository.save(order);
-        shoppingCartRepository.delete(shoppingCart);
+        shoppingCart.getCartItems().clear();
 
         return orderMapper.toDto(savedOrder);
     }

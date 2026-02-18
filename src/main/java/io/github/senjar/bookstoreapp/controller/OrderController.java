@@ -45,15 +45,15 @@ public class OrderController {
         return orderService.getAllOrdersByUserId(user.getId(), pageable);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{orderId}/items")
     @PreAuthorize("hasRole('USER')")
     public Set<OrderItemDto> getItemsFromOrder(Authentication authentication,
-                                               @PathVariable(name = "id") Long orderId) {
+                                               @PathVariable Long orderId) {
         User user = (User) authentication.getPrincipal();
         return orderService.getOrderItems(user.getId(), orderId);
     }
 
-    @GetMapping("/orderItem/{id}")
+    @GetMapping("/{orderId}/items/{itemId}")
     @PreAuthorize("hasRole('USER')")
     @Operation(
             summary = "Get information about an ordered item",
@@ -66,9 +66,10 @@ public class OrderController {
             }
     )
     public OrderItemDto getItemInfo(Authentication authentication,
-                                    @PathVariable(name = "id") Long itemId) {
+                                    @PathVariable Long orderId,
+                                    @PathVariable Long itemId) {
         User user = (User) authentication.getPrincipal();
-        return orderService.getItemInfo(user.getId(), itemId);
+        return orderService.getItemInfo(user.getId(), orderId, itemId);
     }
 
     @PostMapping

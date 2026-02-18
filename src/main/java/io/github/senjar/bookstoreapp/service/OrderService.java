@@ -14,7 +14,7 @@ public interface OrderService {
 
     Set<OrderItemDto> getOrderItems(Long userId, Long orderId);
 
-    OrderItemDto getItemInfo(Long userId,Long itemId);
+    OrderItemDto getItemInfo(Long userId, Long orderId, Long itemId);
 
     OrderDto placeOrder(Long userId, CreateOrderRequestDto requestDto);
 

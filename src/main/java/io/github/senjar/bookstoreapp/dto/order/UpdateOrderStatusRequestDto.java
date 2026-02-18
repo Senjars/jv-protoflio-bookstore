@@ -1,10 +1,12 @@
 package io.github.senjar.bookstoreapp.dto.order;
 
-import ch.qos.logback.core.status.Status;
-import jakarta.validation.constraints.NotBlank;
+import io.github.senjar.bookstoreapp.model.Status;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class UpdateOrderStatusRequestDto {
 
-    @NotBlank
+    @NotNull
     private Status status;
 }

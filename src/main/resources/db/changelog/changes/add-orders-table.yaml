@@ -76,4 +76,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
-
+  - changeSet:
+      author: senjar
+      id: 12
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: book_id
+            referencedTableName: books
+            referencedColumnNames: id
+            constraintName: fk_order_items_book
