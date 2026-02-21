@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.model;
+package io.github.senjar.bookstoreapp.model.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

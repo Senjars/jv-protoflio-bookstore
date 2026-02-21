@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.model;
+package io.github.senjar.bookstoreapp.model.user;
 
 public enum RoleName {
     ROLE_ADMIN,

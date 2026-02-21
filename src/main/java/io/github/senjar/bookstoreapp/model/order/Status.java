@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.model;
+package io.github.senjar.bookstoreapp.model.order;
 
 public enum Status {
     PENDING,

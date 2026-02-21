@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.order;
 
-import io.github.senjar.bookstoreapp.model.OrderItem;
+import io.github.senjar.bookstoreapp.model.order.OrderItem;
 import java.util.Set;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
