@@ -1,7 +1,7 @@
 package io.github.senjar.bookstoreapp.mapper;
 
 import io.github.senjar.bookstoreapp.dto.order.OrderItemDto;
-import io.github.senjar.bookstoreapp.model.OrderItem;
+import io.github.senjar.bookstoreapp.model.order.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

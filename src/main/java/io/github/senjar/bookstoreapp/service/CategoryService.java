@@ -1,7 +1,7 @@
 package io.github.senjar.bookstoreapp.service;
 
 import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
-import io.github.senjar.bookstoreapp.dto.category.CategoryDto;
+import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

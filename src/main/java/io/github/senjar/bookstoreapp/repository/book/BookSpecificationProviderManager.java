@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.book;
 
-import io.github.senjar.bookstoreapp.model.Book;
+import io.github.senjar.bookstoreapp.model.book.Book;
 import io.github.senjar.bookstoreapp.repository.SpecificationProvider;
 import io.github.senjar.bookstoreapp.repository.SpecificationProviderManager;
 import java.util.List;

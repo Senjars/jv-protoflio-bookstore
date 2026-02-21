@@ -1,4 +1,4 @@
-package io.github.senjar.bookstoreapp.dto.category;
+package io.github.senjar.bookstoreapp.dto.book;
 
 import lombok.Data;
 
