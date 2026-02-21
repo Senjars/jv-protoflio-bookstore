@@ -25,12 +25,14 @@ public class CategoryServiceImpl implements CategoryService {
     private final BookMapper bookMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<CategoryDto> findAll(Pageable pageable) {
         return categoryRepository.findAll(pageable)
                 .map(categoryMapper::toDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto getById(Long id) {
         return categoryMapper.toDto(categoryRepository.findById(id)
                 .orElseThrow(
@@ -67,6 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<BookDtoWithoutCategoryIds> findBooksByCategoriesId(Long id, Pageable pageable) {
         return bookRepository.findAllByCategoriesId(id, pageable)
                 .map(bookMapper::toDtoWithoutCategories);
