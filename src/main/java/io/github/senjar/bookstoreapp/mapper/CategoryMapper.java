@@ -1,6 +1,7 @@
 package io.github.senjar.bookstoreapp.mapper;
 
 import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
+import io.github.senjar.bookstoreapp.dto.book.CategoryRequestDto;
 import io.github.senjar.bookstoreapp.model.book.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,9 +14,9 @@ public interface CategoryMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    Category toEntity(CategoryDto categoryDto);
+    Category toEntity(CategoryRequestDto categoryRequestDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    void updateCategoryFromDto(CategoryDto categoryDto, @MappingTarget Category category);
+    void updateCategoryFromDto(CategoryRequestDto categoryDto, @MappingTarget Category category);
 }

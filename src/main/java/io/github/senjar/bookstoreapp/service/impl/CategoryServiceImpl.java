@@ -2,6 +2,7 @@ package io.github.senjar.bookstoreapp.service.impl;
 
 import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
+import io.github.senjar.bookstoreapp.dto.book.CategoryRequestDto;
 import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
 import io.github.senjar.bookstoreapp.mapper.BookMapper;
 import io.github.senjar.bookstoreapp.mapper.CategoryMapper;
@@ -41,20 +42,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public CategoryDto save(CategoryDto categoryDto) {
-        Category category = categoryMapper.toEntity(categoryDto);
+    public CategoryDto save(CategoryRequestDto categoryRequestDto) {
+        Category category = categoryMapper.toEntity(categoryRequestDto);
         Category savedCategory = categoryRepository.save(category);
         return categoryMapper.toDto(savedCategory);
     }
 
     @Transactional
     @Override
-    public CategoryDto update(Long id, CategoryDto categoryDto) {
+    public CategoryDto update(Long id, CategoryRequestDto categoryRequestDto) {
         Category category = categoryRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Category with id "
                 + id + " doesn't exist"));
 
-        categoryMapper.updateCategoryFromDto(categoryDto, category);
+        categoryMapper.updateCategoryFromDto(categoryRequestDto, category);
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
@@ -71,6 +72,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public Page<BookDtoWithoutCategoryIds> findBooksByCategoriesId(Long id, Pageable pageable) {
+        if (!bookRepository.existsById(id)) {
+            throw new EntityNotFoundException("Category with id " + id + " doesn't exist");
+        }
         return bookRepository.findAllByCategoriesId(id, pageable)
                 .map(bookMapper::toDtoWithoutCategories);
     }
