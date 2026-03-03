@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.dto.order;
 
-import io.github.senjar.bookstoreapp.model.Status;
+import io.github.senjar.bookstoreapp.model.order.Status;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;

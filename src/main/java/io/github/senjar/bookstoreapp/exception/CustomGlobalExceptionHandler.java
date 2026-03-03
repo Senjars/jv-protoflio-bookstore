@@ -32,6 +32,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         List<String> mappedErrors = ex.getBindingResult().getAllErrors().stream()
                 .map(this::getErrorMessage).toList();
         body.put("errors", mappedErrors);
+
         return new ResponseEntity<>(body, headers, status);
     }
 
@@ -55,12 +56,23 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST);
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.FORBIDDEN.value());
         body.put("message", ex.getMessage());
+
         return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 

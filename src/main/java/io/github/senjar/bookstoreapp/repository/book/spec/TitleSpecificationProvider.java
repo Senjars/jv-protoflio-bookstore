@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.book.spec;
 
-import io.github.senjar.bookstoreapp.model.Book;
+import io.github.senjar.bookstoreapp.model.book.Book;
 import io.github.senjar.bookstoreapp.repository.SpecificationProvider;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;

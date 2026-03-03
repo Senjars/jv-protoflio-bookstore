@@ -4,7 +4,7 @@ import io.github.senjar.bookstoreapp.dto.order.CreateOrderRequestDto;
 import io.github.senjar.bookstoreapp.dto.order.OrderDto;
 import io.github.senjar.bookstoreapp.dto.order.OrderItemDto;
 import io.github.senjar.bookstoreapp.dto.order.UpdateOrderStatusRequestDto;
-import io.github.senjar.bookstoreapp.model.User;
+import io.github.senjar.bookstoreapp.model.user.User;
 import io.github.senjar.bookstoreapp.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

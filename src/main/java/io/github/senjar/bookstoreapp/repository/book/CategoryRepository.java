@@ -1,6 +1,6 @@
-package io.github.senjar.bookstoreapp.repository.category;
+package io.github.senjar.bookstoreapp.repository.book;
 
-import io.github.senjar.bookstoreapp.model.Category;
+import io.github.senjar.bookstoreapp.model.book.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

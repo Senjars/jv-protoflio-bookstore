@@ -1,7 +1,7 @@
 package io.github.senjar.bookstoreapp.controller;
 
 import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
-import io.github.senjar.bookstoreapp.dto.category.CategoryDto;
+import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
 import io.github.senjar.bookstoreapp.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

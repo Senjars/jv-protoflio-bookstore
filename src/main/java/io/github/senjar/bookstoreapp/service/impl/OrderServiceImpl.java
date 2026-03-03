@@ -5,13 +5,14 @@ import io.github.senjar.bookstoreapp.dto.order.OrderDto;
 import io.github.senjar.bookstoreapp.dto.order.OrderItemDto;
 import io.github.senjar.bookstoreapp.dto.order.UpdateOrderStatusRequestDto;
 import io.github.senjar.bookstoreapp.exception.AccessDeniedException;
+import io.github.senjar.bookstoreapp.exception.BadRequestException;
 import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
 import io.github.senjar.bookstoreapp.mapper.OrderItemMapper;
 import io.github.senjar.bookstoreapp.mapper.OrderMapper;
-import io.github.senjar.bookstoreapp.model.Order;
-import io.github.senjar.bookstoreapp.model.OrderItem;
-import io.github.senjar.bookstoreapp.model.ShoppingCart;
-import io.github.senjar.bookstoreapp.model.Status;
+import io.github.senjar.bookstoreapp.model.cart.ShoppingCart;
+import io.github.senjar.bookstoreapp.model.order.Order;
+import io.github.senjar.bookstoreapp.model.order.OrderItem;
+import io.github.senjar.bookstoreapp.model.order.Status;
 import io.github.senjar.bookstoreapp.repository.order.OrderItemRepository;
 import io.github.senjar.bookstoreapp.repository.order.OrderRepository;
 import io.github.senjar.bookstoreapp.service.OrderService;
@@ -86,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
         ShoppingCart shoppingCart = shoppingCartService.getOrCreateCart(userId);
 
         if (shoppingCart.getCartItems().isEmpty()) {
-            throw new IllegalStateException("Cannot place an order with an empty cart!");
+            throw new BadRequestException("Cannot place an order with an empty cart!");
         }
 
         Order order = orderMapper.toEntity(requestDto);
@@ -114,6 +115,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotal(totalPrice);
         Order savedOrder = orderRepository.save(order);
+
         shoppingCart.getCartItems().clear();
 
         return orderMapper.toDto(savedOrder);

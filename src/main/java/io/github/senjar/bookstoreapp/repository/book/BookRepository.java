@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.book;
 
-import io.github.senjar.bookstoreapp.model.Book;
+import io.github.senjar.bookstoreapp.model.book.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

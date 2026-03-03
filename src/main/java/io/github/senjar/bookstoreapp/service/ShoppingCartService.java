@@ -2,7 +2,7 @@ package io.github.senjar.bookstoreapp.service;
 
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ItemRequestDto;
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ShoppingCartDto;
-import io.github.senjar.bookstoreapp.model.ShoppingCart;
+import io.github.senjar.bookstoreapp.model.cart.ShoppingCart;
 
 public interface ShoppingCartService {
 

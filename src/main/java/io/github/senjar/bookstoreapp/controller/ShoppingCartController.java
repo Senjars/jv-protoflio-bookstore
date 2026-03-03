@@ -3,7 +3,7 @@ package io.github.senjar.bookstoreapp.controller;
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ItemRequestDto;
 import io.github.senjar.bookstoreapp.dto.shoppingcart.ShoppingCartDto;
 import io.github.senjar.bookstoreapp.dto.shoppingcart.UpdateQuantityRequestDto;
-import io.github.senjar.bookstoreapp.model.User;
+import io.github.senjar.bookstoreapp.model.user.User;
 import io.github.senjar.bookstoreapp.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.shoppingcart;
 
-import io.github.senjar.bookstoreapp.model.ShoppingCart;
+import io.github.senjar.bookstoreapp.model.cart.ShoppingCart;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

@@ -1,7 +1,7 @@
 package io.github.senjar.bookstoreapp.mapper;
 
-import io.github.senjar.bookstoreapp.dto.category.CategoryDto;
-import io.github.senjar.bookstoreapp.model.Category;
+import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
+import io.github.senjar.bookstoreapp.model.book.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

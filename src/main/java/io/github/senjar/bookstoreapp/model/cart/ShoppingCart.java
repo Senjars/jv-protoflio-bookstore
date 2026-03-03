@@ -1,5 +1,6 @@
-package io.github.senjar.bookstoreapp.model;
+package io.github.senjar.bookstoreapp.model.cart;
 
+import io.github.senjar.bookstoreapp.model.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

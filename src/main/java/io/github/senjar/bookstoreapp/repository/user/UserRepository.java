@@ -1,6 +1,6 @@
 package io.github.senjar.bookstoreapp.repository.user;
 
-import io.github.senjar.bookstoreapp.model.User;
+import io.github.senjar.bookstoreapp.model.user.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
