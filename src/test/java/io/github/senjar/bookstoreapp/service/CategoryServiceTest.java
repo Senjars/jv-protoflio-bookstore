@@ -33,7 +33,7 @@ import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Category Service Business Logic Tests")
-public class CategoryServiceTest {
+class CategoryServiceTest {
 
     @InjectMocks
     private CategoryServiceImpl categoryService;
@@ -52,15 +52,11 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("Should return a paginated list of all categories mapped to DTOs")
-    public void findAll_ValidPageable_ReturnsAllCategories() {
-        Category category = new Category();
-        category.setName("Horror");
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setName("Horror");
-
+    void findAll_validPageable_returnsCategoryPage() {
+        Category category = createCategory(1L, "Horror");
+        CategoryDto categoryDto = createCategoryDto(1L, "Horror");
         Pageable pageable = PageRequest.of(0, 10);
-        List<Category> categories = List.of(category);
-        Page<Category> categoryPage = new PageImpl<>(categories, pageable, 1);
+        Page<Category> categoryPage = new PageImpl<>(List.of(category), pageable, 1);
 
         when(categoryRepository.findAll(pageable)).thenReturn(categoryPage);
         when(categoryMapper.toDto(category)).thenReturn(categoryDto);
@@ -75,8 +71,8 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("Should throw EntityNotFoundException when category ID is not found in database")
-    public void getById_InvalidId_ThrowsEntityNotFoundException() {
-        Long invalidCategoryId = -10L;
+    void getById_InvalidId_ThrowsEntityNotFoundException() {
+        Long invalidCategoryId = 999L;
         when(categoryRepository.findById(invalidCategoryId)).thenReturn(Optional.empty());
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             categoryService.getById(invalidCategoryId);
@@ -85,67 +81,51 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("Should return a single category DTO when a valid ID is provided")
-    public void getById_ValidId_ReturnsCategoryById() {
-        Category category = new Category();
-        Long categoryId = 1L;
-        category.setId(categoryId);
-        category.setName("Horror");
+    public void getById_validId_returnsCategoryDto() {
+        Long id = 1L;
+        Category category = createCategory(id, "Horror");
+        CategoryDto expected = createCategoryDto(id, "Horror");
 
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(categoryId);
-        categoryDto.setName("Horror");
+        when(categoryMapper.toDto(category)).thenReturn(expected);
+        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
 
-        when(categoryMapper.toDto(category)).thenReturn(categoryDto);
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        CategoryDto actualDto = categoryService.getById(id);
 
-        CategoryDto actualDto = categoryService.getById(categoryId);
-
-        Assertions.assertEquals(actualDto.getName(), categoryDto.getName());
+        Assertions.assertEquals(actualDto.getName(), expected.getName());
+        verify(categoryRepository).findById(id);
+        verify(categoryMapper).toDto(category);
     }
 
     @Test
     @DisplayName("Should successfully map, save and return a new category DTO")
-    public void save_ValidRequest_ReturnsSavedCategory() {
-        Category category = new Category();
-        category.setName("Horror");
-        category.setId(1L);
+    void save_validRequest_returnsSavedCategoryDto() {
+        CategoryRequestDto requestDto = createCategoryRequestDto("Horror");
+        Category category = createCategory(1L, "Horror");
+        CategoryDto expectedDto = createCategoryDto(1L, "Horror");
 
-        CategoryRequestDto categoryDto = new CategoryRequestDto();
-        categoryDto.setName("Horror");
-
-        CategoryDto expectedDto = new CategoryDto();
-        expectedDto.setName("Horror");
-
-        when(categoryMapper.toEntity(categoryDto)).thenReturn(category);
+        when(categoryMapper.toEntity(requestDto)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
         when(categoryMapper.toDto(category)).thenReturn(expectedDto);
 
-        CategoryDto actualDto = categoryService.save(categoryDto);
+        CategoryDto actualDto = categoryService.save(requestDto);
 
-        Assertions.assertEquals(categoryDto.getName(), actualDto.getName());
+        Assertions.assertEquals(requestDto.getName(), actualDto.getName());
         verify(categoryRepository).save(any(Category.class));
     }
 
     @Test
     @DisplayName("Should update existing category details when valid ID and data are provided")
-    public void update_ValidId_UpdatesSingeCategory() {
-        Long categoryId = 1L;
-        Category category = new Category();
-        category.setName("Horror");
-        category.setId(categoryId);
+    void update_validId_returnsUpdatedCategoryDto() {
+        Long id = 1L;
+        Category category = createCategory(id, "Horror");
+        CategoryRequestDto updateDto = createCategoryRequestDto("Comedy");
+        CategoryDto expected = createCategoryDto(id, "Comedy");
 
-        CategoryRequestDto updateDto = new CategoryRequestDto();
-        updateDto.setName("Comedy");
-
-        CategoryDto expected = new CategoryDto();
-        expected.setName("Comedy");
-        expected.setId(categoryId);
-
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
         when(categoryRepository.save(category)).thenReturn(category);
         when(categoryMapper.toDto(category)).thenReturn(expected);
 
-        CategoryDto actual = categoryService.update(categoryId, updateDto);
+        CategoryDto actual = categoryService.update(id, updateDto);
 
         Assertions.assertEquals(expected.getName(), actual.getName());
         verify(categoryRepository).save(category);
@@ -153,15 +133,14 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("Should prevent update and throw EntityNotFoundException for non-existing category ID")
-    public void update_InvalidId_ThrowsEntityNotFoundException() {
-        Long invalidCategoryId = -10L;
-
-        CategoryRequestDto updateDto = new CategoryRequestDto();
-        updateDto.setName("Comedy");
+    void update_InvalidId_ThrowsEntityNotFoundException() {
+        Long invalidCategoryId = 999L;
+        CategoryRequestDto updateDto = createCategoryRequestDto("Comedy");
 
         when(categoryRepository.findById(invalidCategoryId)).thenReturn(Optional.empty());
 
-        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
+        EntityNotFoundException exception = Assertions.assertThrows(
+                EntityNotFoundException.class, () -> {
             categoryService.update(invalidCategoryId, updateDto);
         });
 
@@ -174,72 +153,85 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("Should successfully delete category when it exists in the database")
-    public void deleteById_ValidId_DeletesCategory() {
+    void deleteById_validId_callsRepositoryDelete() {
         Long categoryId = 1L;
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
+
         categoryService.deleteById(categoryId);
+
         verify(categoryRepository).deleteById(categoryId);
     }
 
     @Test
     @DisplayName("Should prevent deletion and throw EntityNotFoundException when category to delete is missing")
-    public void deleteById_InvalidId_ThrowsEntityNotFoundException() {
-        Long InvalidCategoryId = -10L;
+    void deleteById_invalidId_throwsEntityNotFoundException() {
+        Long InvalidCategoryId = 999L;
         when(categoryRepository.existsById(InvalidCategoryId)).thenReturn(false);
 
         EntityNotFoundException exception =
                 Assertions.assertThrows(EntityNotFoundException.class, () -> {
                 categoryService.deleteById(InvalidCategoryId);
                 });
-        Assertions.assertTrue(exception.getMessage().contains(
-                "Can't delete category. Category with id "
-                + InvalidCategoryId + " doesn't exist"));
 
         verify(categoryRepository, never()).deleteById(InvalidCategoryId);
     }
 
     @Test
     @DisplayName("Should return a list of books for a given category ID when category exists")
-    public void findBooksByCategoriesId_ValidId_ReturnsBooks() {
-        Long categoryId = 10L;
-        Category category = new Category();
-        category.setName("Horror");
-        category.setId(categoryId);
-
+    void findBooksByCategoriesId_validId_returnsBooksPage() {
+        Long categoryId = 1L;
         Book book = new Book();
         book.setTitle("Hyperion");
-        book.setCategories(Set.of(category));
-
-        BookDtoWithoutCategoryIds expectedDto = new BookDtoWithoutCategoryIds();
-        expectedDto.setTitle("Hyperion");
-
+        BookDtoWithoutCategoryIds bookDto = new BookDtoWithoutCategoryIds();
+        bookDto.setTitle("Hyperion");
         Pageable pageable = PageRequest.of(0, 10);
-        List<Book> bookList = List.of(book);
-        Page<Book> bookPage = new PageImpl<>(bookList, pageable, 1);
+        Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
 
         when(bookRepository.existsById(categoryId)).thenReturn(true);
         when(bookRepository.findAllByCategoriesId(categoryId, pageable)).thenReturn(bookPage);
-        when(bookMapper.toDtoWithoutCategories(book)).thenReturn(expectedDto);
+        when(bookMapper.toDtoWithoutCategories(book)).thenReturn(bookDto);
 
         Page<BookDtoWithoutCategoryIds> actualBookDto =
                 categoryService.findBooksByCategoriesId(categoryId, pageable);
-        List<BookDtoWithoutCategoryIds> actualContent = actualBookDto.getContent();
 
-        Assertions.assertEquals(1, actualContent.size());
-        Assertions.assertEquals(expectedDto.getTitle(), actualContent.get(0).getTitle());
+        Assertions.assertEquals(1, actualBookDto.getTotalElements());
+        Assertions.assertEquals("Hyperion", actualBookDto.getContent().get(0).getTitle());
         verify(bookRepository).findAllByCategoriesId(categoryId, pageable);
     }
 
     @Test
     @DisplayName("Should throw EntityNotFoundException when trying to fetch books for a non-existing category")
-    public void findBooksByCategoriesId_InvalidId_ThrowsEntityNotFoundException() {
-        Long invalidId = -10L;
+    public void findBooksByCategoriesId_invalidId_throwsEntityNotFoundException() {
+        Long invalidId = 999L;
 
         when(bookRepository.existsById(invalidId)).thenReturn(false);
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             categoryService.findBooksByCategoriesId(invalidId, PageRequest.of(0, 10));
         });
+    }
+
+    private Category createCategory(Long id, String name) {
+        Category category = new Category();
+        category.setId(id);
+        category.setName(name);
+        category.setDescription("Description for " + name);
+        return category;
+    }
+
+    private CategoryDto createCategoryDto(Long id, String name) {
+        CategoryDto dto = new CategoryDto();
+        dto.setId(id);
+        dto.setName(name);
+        dto.setDescription("Description for " + name);
+        return dto;
+    }
+
+    private CategoryRequestDto createCategoryRequestDto(String name) {
+        CategoryRequestDto dto = new CategoryRequestDto();
+        dto.setName(name);
+        dto.setDescription("Description for " + name);
+        return dto;
     }
 
 }

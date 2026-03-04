@@ -15,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class BookRepositoryTest {
+class BookRepositoryTest {
 
     @Autowired
     private BookRepository bookRepository;
@@ -26,7 +26,7 @@ public class BookRepositoryTest {
     executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "classpath:database/books/remove-book-from-books.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void findAllByCategoriesId_ValidCategoryId_ReturnsBooksWithAdequateCategoryId() {
+    void findAllByCategoriesId_validCategoryId_returnsPageWithBooks() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Book> actual = bookRepository.findAllByCategoriesId(1L, pageable);
 

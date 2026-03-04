@@ -54,17 +54,10 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should successfully retrieve a book when a valid ID is provided")
-    public void getBookById_WithValidBookId_ReturnsValidBook() {
+    void getBookById_validBookId_returnsBookDto() {
         Long bookId = 1L;
-        Book book = new Book();
-        book.setId(bookId);
-        book.setTitle("Hyperion");
-        book.setAuthor("Dan Simmons");
-
-        BookDto expectedDto = new BookDto();
-        expectedDto.setId(bookId);
-        expectedDto.setTitle("Hyperion");
-        expectedDto.setAuthor("Dan Simmons");
+        Book book = createBook(bookId, "Hyperion", "Dan Simmons");
+        BookDto expectedDto = createBookDto(bookId, "Hyperion", "Dan Simmons");
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(bookMapper.toDto(book)).thenReturn(expectedDto);
@@ -72,14 +65,17 @@ public class BookServiceTest {
         BookDto actual = bookService.getBookById(bookId);
 
         Assertions.assertNotNull(actual);
-        Assertions.assertEquals(actual.getTitle(), expectedDto.getTitle());
-        Assertions.assertEquals(actual.getAuthor(), expectedDto.getAuthor());
+        Assertions.assertEquals(expectedDto.getTitle(), actual.getTitle());
+        Assertions.assertEquals(expectedDto.getAuthor(), actual.getAuthor());
+
+        verify(bookRepository).findById(bookId);
+        verify(bookMapper).toDto(book);
     }
 
     @Test
     @DisplayName("Should throw EntityNotFoundException when attempting to get a book with a non-existing ID")
-    public void getBookById_WithInvalidBookId_ThrowsEntityNotFoundException() {
-        Long invalidBookId = -10L;
+    void getBookById_invalidBookId_throwsEntityNotFoundException() {
+        Long invalidBookId = 999L;
         when(bookRepository.findById(invalidBookId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
@@ -89,23 +85,11 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should correctly update and return a book when valid data and ID are provided")
-    public void update_ValidRequestDtoValidId_ReturnsUpdatedBook() {
+    void update_validRequestDtoValidId_ReturnsUpdatedBookDto() {
         Long bookId = 1L;
-        Book existingBook = new Book();
-        existingBook.setId(bookId);
-        existingBook.setTitle("Hyperion");
-        existingBook.setAuthor("Dan Simmons");
-        existingBook.setPrice(new BigDecimal("19.99"));
-
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
-        requestDto.setTitle("Dan Simmons");
-        requestDto.setPrice(new BigDecimal("15.99"));
-
-        BookDto expectedDto = new BookDto();
-        expectedDto.setId(bookId);
-        expectedDto.setTitle("Hyperion");
-        expectedDto.setAuthor("Dan Simmons");
-        expectedDto.setPrice(new BigDecimal("15.99"));
+        Book existingBook = createBook(bookId, "Old Title", "Old Author");
+        CreateBookRequestDto requestDto = createRequestDto("Hyperion", "Dan Simmons");
+        BookDto expectedDto = createBookDto(bookId, "Hyperion", "Dan Simmons");
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(existingBook));
         when(bookRepository.save(existingBook)).thenReturn(existingBook);
@@ -115,12 +99,13 @@ public class BookServiceTest {
 
         Assertions.assertEquals(expectedDto.getAuthor(), actual.getAuthor());
         Assertions.assertEquals(expectedDto.getPrice(), actual.getPrice());
+        verify(bookRepository).save(existingBook);
     }
 
     @Test
     @DisplayName("Should throw EntityNotFoundException when attempting to update a non-existing book")
-    public void update_ValidRequestDtoInvalidId_ThrowsEntityNotFoundException() {
-        Long invalidBookId = -1L;
+    void update_invalidId_throwsEntityNotFoundException() {
+        Long invalidBookId = 999L;
         CreateBookRequestDto requestDto = new CreateBookRequestDto();
 
         when(bookRepository.findById(invalidBookId)).thenReturn(Optional.empty());
@@ -132,7 +117,7 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should successfully delete a book by ID when the book exists")
-    public void delete_ValidId_DeletesBook() {
+    void delete_validId_callsRepositoryDelete() {
         Long bookId = 1L;
         when(bookRepository.existsById(bookId)).thenReturn(true);
 
@@ -143,8 +128,8 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should throw EntityNotFoundException and prevent deletion when book ID does not exist")
-    public void delete_InvalidId_ThrowsEntityNotFoundException() {
-        Long invalidBookId = -10L;
+    void delete_invalidId_throwsEntityNotFoundException() {
+        Long invalidBookId = 999L;
         when(bookRepository.existsById(invalidBookId)).thenReturn(false);
 
         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
@@ -158,20 +143,13 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should throw EntityNotFoundException during save if some category IDs are missing in database")
-    public void save_InValidRequest_ThrowsEntityNotFoundException() {
+    void save_invalidRequest_throwsEntityNotFoundException() {
         Set<Long> categoryIds = Set.of(1L, 2L);
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+        CreateBookRequestDto requestDto = createRequestDto("Title", "Author");
         requestDto.setCategoryIds(categoryIds);
 
-        Book book = new Book();
-
-        when(bookMapper.toEntity(requestDto)).thenReturn(book);
-
-        Category existingCategory = new Category();
-        existingCategory.setId(1L);
-        List<Category> foundCategories = List.of(existingCategory);
-
-        when(categoryRepository.findAllById(categoryIds)).thenReturn(foundCategories);
+        when(bookMapper.toEntity(requestDto)).thenReturn(new Book());
+        when(categoryRepository.findAllById(categoryIds)).thenReturn(List.of(new Category()));
 
         EntityNotFoundException exception =
                 Assertions.assertThrows(EntityNotFoundException.class,
@@ -184,21 +162,18 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should successfully map, save and return a BookDto when all data and categories are valid")
-    public void save_ValidRequest_ReturnsBookDto() {
+    void save_validRequest_returnsBookDto() {
         Set<Long> categoryIds = Set.of(1L);
-        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+        CreateBookRequestDto requestDto = createRequestDto("Hyperion", "Dan Simmons");
         requestDto.setCategoryIds(categoryIds);
 
-        Book book = new Book();
+        Book book = createBook(1L, "Hyperion", "Dan Simmons");
         Category category = new Category();
         category.setId(1L);
-        List<Category> foundCategories = List.of(category);
-
-        BookDto expectedDto = new BookDto();
-        expectedDto.setTitle("Test Title");
+        BookDto expectedDto = createBookDto(1L, "Hyperion", "Dan Simmons");
 
         when(bookMapper.toEntity(requestDto)).thenReturn(book);
-        when(categoryRepository.findAllById(categoryIds)).thenReturn(foundCategories);
+        when(categoryRepository.findAllById(categoryIds)).thenReturn(List.of(category));
         when(bookRepository.save(book)).thenReturn(book);
         when(bookMapper.toDto(book)).thenReturn(expectedDto);
 
@@ -212,31 +187,25 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should return a paginated list of BookDtos for any valid pageable request")
-    public void findAll_ValidPageable_ReturnsAllBooks() {
-        Book book = new Book();
-        book.setTitle("Test title");
-
-        BookDto bookDto = new BookDto();
-        bookDto.setTitle("Test title");
-
+    void findAll_validPageable_returnsPageOfBookDtos() {
         Pageable pageable = PageRequest.of(0, 10);
-        List<Book> books = List.of(book);
-        Page<Book> bookPage = new PageImpl<>(books, pageable, 1);
+        Book book = createBook(1L, "Hyperion", "Dan Simmons");
+        BookDto bookDto = createBookDto(1L, "Hyperion", "Dan Simmons");
+        Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
 
         when(bookRepository.findAll(pageable)).thenReturn(bookPage);
         when(bookMapper.toDto(book)).thenReturn(bookDto);
 
         Page<BookDto> actualPage = bookService.findAll(pageable);
-        List<BookDto> actualContent = actualPage.getContent();
 
-        Assertions.assertEquals(1, actualContent.size());
-        Assertions.assertEquals(bookDto.getTitle(), actualContent.get(0).getTitle());
+        Assertions.assertEquals(1, actualPage.getTotalElements());
+        Assertions.assertEquals(bookDto.getTitle(), actualPage.getContent().get(0).getTitle());
         verify(bookRepository).findAll(pageable);
     }
 
     @Test
     @DisplayName("Should return a page of books matching the specified search criteria")
-    public void search_ValidParams_ReturnsPageOfBookDtos() {
+    void search_validParams_returnsPageOfBookDtos() {
         BookSearchParametersDto searchParams = new BookSearchParametersDto(
                 new String[]{"Hyperion"},
                 new String[]{"Dan Simmons"},
@@ -271,7 +240,7 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Should return an empty page when no books match the search parameters")
-    public void search_NoMatches_ReturnsEmptyPage() {
+    void search_noMatches_returnsEmptyPage() {
         BookSearchParametersDto searchParametersDto = new  BookSearchParametersDto(
                 new String[]{"Hyperion"},
                 new String[]{"Dan Simmons"},
@@ -294,5 +263,33 @@ public class BookServiceTest {
         Assertions.assertEquals(0, bookPage.getTotalElements());
 
         verify(bookRepository).findAll(spec, pageable);
+    }
+
+    private Book createBook(Long id, String title, String author) {
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        book.setAuthor(author);
+        book.setPrice(new BigDecimal("15.99"));
+        book.setIsbn("978-01-34685-99-1");
+        return book;
+    }
+
+    private BookDto createBookDto(Long id, String title, String author) {
+        BookDto dto = new BookDto();
+        dto.setId(id);
+        dto.setTitle(title);
+        dto.setAuthor(author);
+        dto.setPrice(new BigDecimal("15.99"));
+        dto.setIsbn("978-01-34685-99-1");
+        return dto;
+    }
+
+    private CreateBookRequestDto createRequestDto(String title, String author) {
+        return new CreateBookRequestDto()
+                .setTitle(title)
+                .setAuthor(author)
+                .setPrice(new BigDecimal("15.99"))
+                .setIsbn("978-01-34685-99-1");
     }
 }

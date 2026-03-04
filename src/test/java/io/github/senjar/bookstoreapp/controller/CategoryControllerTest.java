@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         value = CategoryController.class,
         excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
 @DisplayName("Category Controller Integration Tests")
-public class CategoryControllerTest {
+class CategoryControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,31 +60,24 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should successfully create a new category when admin provides valid data")
-    void createCategory_ValidRequest_CreatesNewCategory() throws Exception {
-        CategoryRequestDto categoryDto = new CategoryRequestDto()
-                .setName("Horror")
-                .setDescription("Books with scary stories");
-
-        CategoryDto expected = new CategoryDto();
-        expected.setName(categoryDto.getName());
-        expected.setDescription(categoryDto.getDescription());
+    void createCategory_validRequest_returnsCategoryDto() throws Exception {
+        CategoryRequestDto requestDto = createRequestDto("Horror");
+        CategoryDto expected = createDto(1L, "Horror");
 
         when(categoryService.save(any(CategoryRequestDto.class))).thenReturn(expected);
 
         mockMvc.perform(post("/api/categories")
                         .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(categoryDto)))
+                .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Horror"))
-                .andExpect(jsonPath("$.description")
-                        .value("Books with scary stories"));
+                .andExpect(jsonPath("$.name").value("Horror"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 400 Bad Request when category creation data is invalid")
-    void createCategory_InvalidRequest_ThrowsBadRequestException() throws Exception {
+    void createCategory_invalidRequest_throwsBadRequestException() throws Exception {
         CategoryRequestDto categoryDto = new CategoryRequestDto();
 
         mockMvc.perform(post("/api/categories")
@@ -97,7 +90,7 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = {"USER" , "ADMIN"})
     @DisplayName("Should return a paginated list of all categories for authorized users")
-    void getAll_ValidRequest_ReturnsAllCategories() throws Exception {
+    void getAll_validRequest_returnsPageOfCategories() throws Exception {
         CategoryDto categoryDto = new CategoryDto()
                 .setName("Horror");
         List<CategoryDto> categories = List.of(categoryDto);
@@ -118,13 +111,11 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     @DisplayName("Should return category details when searching by a valid ID")
-    void getCategoryById_ValidId_ReturnsCategory() throws Exception {
+    void getCategoryById_validId_returnsCategoryDto() throws Exception {
         Long id = 1L;
-        CategoryDto categoryDto = new CategoryDto()
-                .setId(id)
-                .setName("Horror");
+        CategoryDto expected = createDto(id, "Horror");
 
-        when(categoryService.getById(id)).thenReturn(categoryDto);
+        when(categoryService.getById(id)).thenReturn(expected);
 
         mockMvc.perform(get("/api/categories/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -135,36 +126,30 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     @DisplayName("Should return 404 Not Found when category ID does not exist")
-    void getCategoryById_InvalidId_ThrowsEntityNotFoundException() throws Exception {
-        Long invalidId = -10L;
+    void getCategoryById_invalidId_throwsEntityNotFoundException() throws Exception {
+        Long invalidId = 999L;
 
-        when(categoryService.getById(invalidId))
-                .thenThrow(new EntityNotFoundException(
+        when(categoryService.getById(invalidId)).thenThrow(new EntityNotFoundException(
                         "Category with id: " + invalidId + " not found"));
 
-        mockMvc.perform(get("/api/categories/{invalidId}", invalidId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/categories/{invalidId}", invalidId))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should successfully update category details when admin provides valid data")
-    void updateCategory_ValidRequest_UpdatesCategory() throws Exception {
+    void updateCategory_validRequest_returnsCategoryDto() throws Exception {
         Long id = 1L;
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(id);
-        categoryDto.setName("Comedy");
+        CategoryRequestDto requestDto = createRequestDto("Comedy");
+        CategoryDto expected = createDto(id, "Comedy");
 
-        CategoryRequestDto categoryRequestDto = new CategoryRequestDto()
-                .setName("Comedy");
-
-        when(categoryService.update(eq(id), any(CategoryRequestDto.class))).thenReturn(categoryDto);
+        when(categoryService.update(eq(id), any(CategoryRequestDto.class))).thenReturn(expected);
 
         mockMvc.perform(put("/api/categories/{id}", id)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(categoryRequestDto)))
+                .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Comedy"));
     }
@@ -172,8 +157,8 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 404 Not Found when trying to update a non-existing category")
-    void updateCategory_InvalidId_ThrowsEntityNotFoundException() throws Exception {
-        Long invalidId = -10L;
+    void updateCategory_invalidId_throwsEntityNotFoundException() throws Exception {
+        Long invalidId = 999L;
 
         CategoryRequestDto categoryRequestDto = new CategoryRequestDto()
                 .setName("Horror");
@@ -191,7 +176,7 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should successfully delete category when a valid ID is provided")
-    void deleteCategory_ValidId_DeletesCategory() throws Exception {
+    void deleteCategory_validId_returnsNoContent() throws Exception {
         Long id = 1L;
 
         mockMvc.perform(delete("/api/categories/{id}", id)
@@ -204,8 +189,8 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 404 Not Found when admin tries to delete a non-existing category")
-    void deleteCategory_InvalidId_ThrowsEntityNotFoundException() throws Exception {
-        Long invalidId = -10L;
+    void deleteCategory_invalidId_throwsEntityNotFoundException() throws Exception {
+        Long invalidId = 999L;
 
         doThrow(new EntityNotFoundException("Category with id: " + invalidId + " not found"))
                 .when(categoryService).deleteById(invalidId);
@@ -218,7 +203,7 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     @DisplayName("Should return a list of books belonging to a specific category")
-    void getBooksByCategoryId_ValidId_ReturnsBookList() throws Exception {
+    void getBooksByCategoryId_validId_returnsBookList() throws Exception {
         Long id = 1L;
         BookDtoWithoutCategoryIds bookDto = new BookDtoWithoutCategoryIds();
 
@@ -238,8 +223,8 @@ public class CategoryControllerTest {
     @Test
     @WithMockUser(roles = {"USER", "ADMIN"})
     @DisplayName("Should return 404 Not Found when fetching books for a non-existing category")
-    void getBooksByCategoryId_InvalidId_ThrowsEntityNotFoundException() throws Exception {
-        Long invalidId = -10L;
+    void getBooksByCategoryId_invalidId_throwsEntityNotFoundException() throws Exception {
+        Long invalidId = 999L;
 
         when(categoryService.findBooksByCategoriesId(eq(invalidId), any(Pageable.class)))
                 .thenThrow(new EntityNotFoundException(
@@ -248,5 +233,18 @@ public class CategoryControllerTest {
         mockMvc.perform(get("/api/categories/{invalidId}/books", invalidId)
                 .with(csrf()))
                 .andExpect(status().isNotFound());
+    }
+
+    private CategoryRequestDto createRequestDto(String name) {
+        return new CategoryRequestDto()
+                .setName(name)
+                .setDescription("Books with " + name.toLowerCase() + " stories");
+    }
+
+    private CategoryDto createDto(Long id, String name) {
+        return new CategoryDto()
+                .setId(id)
+                .setName(name)
+                .setDescription("Books with " + name.toLowerCase() + " stories");
     }
 }

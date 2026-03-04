@@ -3,6 +3,7 @@ package io.github.senjar.bookstoreapp.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -18,13 +19,11 @@ import io.github.senjar.bookstoreapp.dto.book.BookSearchParametersDto;
 import io.github.senjar.bookstoreapp.dto.book.CreateBookRequestDto;
 import io.github.senjar.bookstoreapp.exception.BadRequestException;
 import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
-import io.github.senjar.bookstoreapp.model.book.Book;
 import io.github.senjar.bookstoreapp.security.CustomUserDetailsService;
 import io.github.senjar.bookstoreapp.security.JwtUtil;
 import io.github.senjar.bookstoreapp.service.BookService;
 import java.math.BigDecimal;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ import org.springframework.test.web.servlet.MockMvc;
         value = BookController.class,
         excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
 @DisplayName("Book Controller Integration Tests")
-public class BookControllerTest {
+class BookControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -63,27 +62,16 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should successfully create a new book when request is valid")
-    void createBook_ValidRequestDto_CreatesBook() throws Exception {
-        CreateBookRequestDto requestDto = new CreateBookRequestDto()
-                .setTitle("Effective Java")
-                .setAuthor("Joshua Bloch")
-                .setIsbn("978-01-34685-99-1")
-                .setPrice(new BigDecimal("150.00"));
-
-        BookDto expected = new BookDto()
-                .setTitle(requestDto.getTitle())
-                .setAuthor(requestDto.getAuthor())
-                .setIsbn(requestDto.getIsbn())
-                .setPrice(requestDto.getPrice());
+    void create_validRequest_returnsBookDto() throws Exception {
+        CreateBookRequestDto requestDto = createValidRequestDto();
+        BookDto expected = createBookDto();
 
         when(bookService.save(any(CreateBookRequestDto.class))).thenReturn(expected);
-
-        String jsonRequest = objectMapper.writeValueAsString(requestDto);
 
         mockMvc.perform(
                         post("/api/books")
                                 .with(csrf())
-                                .content(jsonRequest)
+                                .content(objectMapper.writeValueAsString(requestDto))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title").value("Effective Java"))
@@ -95,49 +83,42 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 400 Bad Request when book creation data is invalid")
-    void createBook_InvalidRequestDto_ThrowsBadRequestException() throws Exception {
-        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
+    void create_invalidRequest_throwsBadRequestException() throws Exception {
+        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto()
+                .setTitle("");
 
         mockMvc.perform(post("/api/books")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(createBookRequestDto)))
                 .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(bookService);
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should update book details successfully when ID and data are valid")
-    void updateBook_ValidRequest_UpdatesBook() throws Exception {
+    void update_validRequest_returnsBookDto() throws Exception {
         Long id = 1L;
-        CreateBookRequestDto requestDto = new CreateBookRequestDto()
-                .setTitle("Test")
-                .setAuthor("John Doe")
-                .setIsbn("123-45-6789-99-1")
-                .setPrice(new BigDecimal("150.00"));
+        CreateBookRequestDto requestDto = createValidRequestDto();
+        BookDto expected = createBookDto();
 
-        BookDto bookDto = new BookDto();
-        bookDto.setId(id);
-        bookDto.setTitle(requestDto.getTitle());
-        bookDto.setAuthor(requestDto.getAuthor());
-        bookDto.setIsbn(requestDto.getIsbn());
-        bookDto.setPrice(requestDto.getPrice());
-
-        when(bookService.update(requestDto, id)).thenReturn(bookDto);
+        when(bookService.update(requestDto, id)).thenReturn(expected);
 
         mockMvc.perform(put("/api/books/{id}", id)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.author").value("John Doe"))
-                .andExpect(jsonPath("$.title").value("Test"));
+                .andExpect(jsonPath("$.author").value("Joshua Bloch"))
+                .andExpect(jsonPath("$.title").value("Effective Java"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 400 Bad Request when updating with incomplete data")
-    void updateBook_InvalidRequest_ThrowsBadRequestException() throws Exception {
+    void update_invalidRequest_throwsBadRequestException() throws Exception {
         Long id = 1L;
         CreateBookRequestDto requestDto = new CreateBookRequestDto()
                 .setTitle("Effective Java")
@@ -155,13 +136,9 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 404 when attempting to update a non-existing book")
-    void updateBook_InvalidId_ThrowsEntityNotFoundException() throws Exception {
-        Long invalidId = -10L;
-        CreateBookRequestDto requestDto = new CreateBookRequestDto()
-                .setTitle("Effective Java")
-                .setAuthor("Joshua Bloch")
-                .setIsbn("978-01-34685-99-1")
-                .setPrice(new BigDecimal("150.00"));
+    void update_invalidId_throwsEntityNotFoundException() throws Exception {
+        Long invalidId = 999L;
+        CreateBookRequestDto requestDto = createValidRequestDto();
 
         when(bookService.update(requestDto, invalidId)).thenThrow(
                 new EntityNotFoundException("Book with id: " + invalidId + " not found"));
@@ -176,10 +153,8 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Should return a paginated list of all books for authenticated users")
-    void getAll_ValidRequest_ReturnsList() throws Exception {
-        BookDto bookDto = new BookDto()
-                .setTitle("Effective Java")
-                .setAuthor("Joshua Bloch");
+    void getAll_validRequest_returnsPageOfBooks() throws Exception {
+        BookDto bookDto = createBookDto();
 
         List<BookDto> books = List.of(bookDto);
         Page<BookDto> bookDtoPage = new PageImpl<>(
@@ -198,14 +173,11 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Should return book details when a valid ID is provided")
-    void getBookById_ValidId_ReturnsBook() throws Exception {
+    void getById_validId_returnsBookDto() throws Exception {
         Long id = 1L;
-        BookDto bookDto = new BookDto()
-                .setId(id)
-                .setTitle("Effective Java")
-                .setAuthor("Joshua Bloch");
+        BookDto expected = createBookDto();
 
-        when(bookService.getBookById(id)).thenReturn(bookDto);
+        when(bookService.getBookById(id)).thenReturn(expected);
 
         mockMvc.perform(get("/api/books/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -217,26 +189,19 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Should return 404 Not Found when searching for a book with a non-existing ID")
-    void getBookById_InvalidId_ThrowsEntityNotFoundException() throws Exception {
-        Long invalidId = -10L;
-        BookDto bookDto = new BookDto()
-                .setId(invalidId)
-                .setTitle("Effective Java")
-                .setAuthor("Joshua Bloch");
-
+    void getById_invalidId_throwsEntityNotFoundException() throws Exception {
+        Long invalidId = 999L;
         when(bookService.getBookById(invalidId)).thenThrow(
                 new EntityNotFoundException("Book with id: "  + invalidId + " not found"));
 
-        mockMvc.perform(get("/api/books/{invalidId}", invalidId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(bookDto)))
+        mockMvc.perform(get("/api/books/{invalidId}", invalidId))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should successfully delete a book when a valid ID is provided")
-    void deleteById_ValidId_DeletesBook() throws Exception {
+    void delete_validId_returnsNoContent() throws Exception {
         Long id = 1L;
 
         mockMvc.perform(delete("/api/books/{id}", id)
@@ -249,8 +214,8 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("Should return 404 Not Found when trying to delete a book that doesn't exist")
-    void deleteById_InvalidId_ThrowsEntityNotFoundException() throws Exception {
-        Long invalidId = -10L;
+    void delete_invalidId_throwsEntityNotFoundException() throws Exception {
+        Long invalidId = 999L;
 
         doThrow(new EntityNotFoundException("Book with id: " + invalidId + " not found"))
                 .when(bookService).deleteById(invalidId);
@@ -263,7 +228,7 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Should return a list of books matching the search criteria")
-    void search_ValidBookSearchParameters_ReturnsList() throws Exception {
+    void search_validParameters_returnsPageOfBooks() throws Exception {
         BookDto bookDto = new BookDto()
                 .setTitle("Effective Java")
                 .setAuthor("Joshua Bloch");
@@ -288,8 +253,7 @@ public class BookControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("Should return 400 Bad Request when search parameters are incorrect")
-    void search_InvalidBookSearchParameters_ThrowsBadRequestException() throws Exception {
-
+    void search_invalidParameters_throwsBadRequestException() throws Exception {
         doThrow(new BadRequestException("Wrong search parameters"))
                 .when(bookService).search(any(), any());
 
@@ -299,4 +263,20 @@ public class BookControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    private CreateBookRequestDto createValidRequestDto() {
+        return new CreateBookRequestDto()
+                .setTitle("Effective Java")
+                .setAuthor("Joshua Bloch")
+                .setIsbn("978-01-34685-99-1")
+                .setPrice(new BigDecimal("150.00"));
+    }
+
+    private BookDto createBookDto() {
+        return new BookDto()
+                .setId(1L)
+                .setTitle("Effective Java")
+                .setAuthor("Joshua Bloch")
+                .setIsbn("978-01-34685-99-1")
+                .setPrice(new BigDecimal("150.00"));
+    }
 }
