@@ -2,6 +2,7 @@ package io.github.senjar.bookstoreapp.service;
 
 import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
+import io.github.senjar.bookstoreapp.dto.book.CategoryRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,9 +12,9 @@ public interface CategoryService {
 
     CategoryDto getById(Long id);
 
-    CategoryDto save(CategoryDto categoryDto);
+    CategoryDto save(CategoryRequestDto categoryRequestDto);
 
-    CategoryDto update(Long id, CategoryDto categoryDto);
+    CategoryDto update(Long id, CategoryRequestDto categoryRequestDto);
 
     void deleteById(Long id);
 
