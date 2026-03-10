@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8
+      author: senjar
+      changes:
+        - createTable:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: books_categories
+            baseColumnNames: book_id
+            constraintName: fk_books_categories_book
+            referencedTableName: books
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: books_categories
+            baseColumnNames: category_id
+            constraintName: fk_books_categories_category
+            referencedTableName: categories
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addPrimaryKey:
+            tableName: books_categories
+            columnNames: book_id, category_id
+            constraintName: pk_books_categories

@@ -1,0 +1,66 @@
+[33m7914184[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop2[m[33m, [m[1;31morigin/develop2[m[33m)[m HEAD@{0}: commit: BookstoreAppApplicationTests fixed
+[33m1f7a896[m HEAD@{1}: commit: Shopping cart and order tests
+[33m006ecd7[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{2}: checkout: moving from develop to develop2
+[33m006ecd7[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{3}: reset: moving to HEAD
+[33m006ecd7[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{4}: reset: moving to HEAD~1
+[33m4245896[m HEAD@{5}: commit: Shopping cart and order tests
+[33m006ecd7[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mdevelop[m[33m)[m HEAD@{6}: commit: Book and Category Tests refactor
+[33m2a3e0a7[m HEAD@{7}: commit: Book and Category Tests
+[33m68bbb31[m HEAD@{8}: commit: Docker refactor + env.sample
+[33m5c32336[m HEAD@{9}: commit: Docker added + packages refactor
+[33m6b790cb[m HEAD@{10}: commit: UpdateOrderStatus + liquibase fixed
+[33me93bd86[m HEAD@{11}: commit: Order controller and orderItems added
+[33ma5e968a[m HEAD@{12}: commit: AccessDeniedException and added, ShoppingCartController fixed
+[33m2aa24d8[m HEAD@{13}: commit: Shopping cart functionality and mapping to cart items added
+[33m8ea8fbe[m[33m ([m[1;31morigin/developC[m[33m, [m[1;32mmain[m[33m)[m HEAD@{14}: checkout: moving from main to develop
+[33m8ea8fbe[m[33m ([m[1;31morigin/developC[m[33m, [m[1;32mmain[m[33m)[m HEAD@{15}: merge developC: Fast-forward
+[33m9849163[m HEAD@{16}: checkout: moving from developC to main
+[33m8ea8fbe[m[33m ([m[1;31morigin/developC[m[33m, [m[1;32mmain[m[33m)[m HEAD@{17}: checkout: moving from main to developC
+[33m9849163[m HEAD@{18}: checkout: moving from developC to main
+[33m8ea8fbe[m[33m ([m[1;31morigin/developC[m[33m, [m[1;32mmain[m[33m)[m HEAD@{19}: pull: Merge made by the 'ort' strategy.
+[33m60d1d02[m HEAD@{20}: commit: Categories + CategoryController added
+[33m8d69654[m HEAD@{21}: commit: Categories + CategoryController added
+[33mab166bf[m HEAD@{22}: checkout: moving from develop to developC
+[33m2e79719[m HEAD@{23}: commit: Added JWT: login, authetication service JWT Util, UserLoginDtos
+[33mab166bf[m HEAD@{24}: checkout: moving from developC to develop
+[33mab166bf[m HEAD@{25}: checkout: moving from develop to developC
+[33mab166bf[m HEAD@{26}: checkout: moving from developC to develop
+[33mab166bf[m HEAD@{27}: checkout: moving from develop to developC
+[33mab166bf[m HEAD@{28}: commit: Added JWT: login, authetication service JWT Util, UserLoginDtos
+[33mf413565[m HEAD@{29}: commit: Encoding password
+[33m1dd75b8[m HEAD@{30}: commit: LiquidBase fixes, automatic role assignment
+[33m421133f[m HEAD@{31}: commit: Changelogs and SecurityConfig refactor;
+[33m74e74bc[m HEAD@{32}: commit: Spring security
+[33m4572260[m HEAD@{33}: commit: UserResponseDto and UserDto refactor
+[33mb5591a6[m HEAD@{34}: commit: User entity added, registration added
+[33m9849163[m HEAD@{35}: checkout: moving from main to develop
+[33m9849163[m HEAD@{36}: reset: moving to origin/main
+[33m9849163[m HEAD@{37}: checkout: moving from paginationDev to main
+[33m5a0d3f8[m HEAD@{38}: checkout: moving from develop to paginationDev
+[33ma044472[m HEAD@{39}: commit: BookDto - annotations fixed, ExceptionHandler update
+[33ma687f59[m HEAD@{40}: checkout: moving from paginationDev to develop
+[33m5a0d3f8[m HEAD@{41}: commit: Swagger annotations added + controller methods fixed
+[33m192fb32[m HEAD@{42}: commit: Swagger and pagination added
+[33ma8b41c3[m HEAD@{43}: checkout: moving from develop to paginationDev
+[33ma687f59[m HEAD@{44}: commit: Validation added
+[33ma8b41c3[m HEAD@{45}: checkout: moving from paginationDev to develop
+[33ma8b41c3[m HEAD@{46}: checkout: moving from develop to paginationDev
+[33ma8b41c3[m HEAD@{47}: commit: GlobalExceptionHandler
+[33m238dad0[m HEAD@{48}: checkout: moving from part4dev to develop
+[33m238dad0[m HEAD@{49}: commit: Specification builder/provider adjusted
+[33me7ddea1[m HEAD@{50}: commit: Search
+[33m7e86b7f[m HEAD@{51}: checkout: moving from main to part4dev
+[33m3b51f9a[m HEAD@{52}: checkout: moving from part4dev to main
+[33m7e86b7f[m HEAD@{53}: checkout: moving from part3 to part4dev
+[33m7e86b7f[m HEAD@{54}: commit: Annotations, service logic, pom fixed
+[33mf4942e5[m HEAD@{55}: commit: Liquidbase, JpaRepo, update and soft delete
+[33me1a9e57[m HEAD@{56}: checkout: moving from develop to part3
+[33me1a9e57[m HEAD@{57}: commit: pom fixed
+[33mbf94b76[m HEAD@{58}: commit: Mappers, dto, missing methods in repo added
+[33m3b51f9a[m HEAD@{59}: checkout: moving from main to develop
+[33m3b51f9a[m HEAD@{60}: pull origin main: Fast-forward
+[33mb9be524[m HEAD@{61}: checkout: moving from develop to main
+[33m8572109[m HEAD@{62}: commit (amend): Repo, model, BookService + config
+[33mf6516bc[m HEAD@{63}: commit: Repo, model, BookService + config
+[33mb9be524[m HEAD@{64}: checkout: moving from main to develop
+[33mb9be524[m HEAD@{65}: commit (initial): Initial commit
