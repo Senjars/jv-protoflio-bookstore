@@ -2,6 +2,7 @@ package io.github.senjar.bookstoreapp.controller;
 
 import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
 import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
+import io.github.senjar.bookstoreapp.dto.book.CategoryRequestDto;
 import io.github.senjar.bookstoreapp.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,7 +42,7 @@ public class CategoryController {
                     @ApiResponse(responseCode = "201", description = "Category created")
             }
     )
-    public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
+    public CategoryDto createCategory(@RequestBody @Valid CategoryRequestDto categoryDto) {
         return categoryService.save(categoryDto);
     }
 
@@ -85,7 +86,7 @@ public class CategoryController {
             }
     )
     public CategoryDto updateCategory(@PathVariable Long id,
-                                      @RequestBody @Valid CategoryDto categoryDto) {
+                                      @RequestBody @Valid CategoryRequestDto categoryDto) {
         return categoryService.update(id, categoryDto);
     }
 
