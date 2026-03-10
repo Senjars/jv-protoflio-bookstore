@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebMvcTest(
         value = CategoryController.class,
         excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
-@DisplayName("Category Controller Integration Tests")
+@DisplayName("Category Controller Tests")
 class CategoryControllerTest {
 
     @Autowired

@@ -40,7 +40,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public Page<OrderDto> getAllOrdersByUserId(Long userId, Pageable pageable) {
-
         return orderRepository.findAllByUserId(userId, pageable)
                 .map(orderMapper::toDto);
     }

@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(
         value = BookController.class,
         excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
-@DisplayName("Book Controller Integration Tests")
+@DisplayName("Book Controller Tests")
 class BookControllerTest {
 
     @Autowired
