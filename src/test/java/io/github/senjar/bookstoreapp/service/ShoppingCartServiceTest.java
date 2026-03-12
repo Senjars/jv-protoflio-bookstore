@@ -30,6 +30,7 @@ import io.github.senjar.bookstoreapp.model.user.User;
 import io.github.senjar.bookstoreapp.repository.book.BookRepository;
 import io.github.senjar.bookstoreapp.repository.shoppingcart.CartItemRepository;
 import io.github.senjar.bookstoreapp.repository.shoppingcart.ShoppingCartRepository;
+import io.github.senjar.bookstoreapp.repository.user.UserRepository;
 import io.github.senjar.bookstoreapp.security.CustomUserDetailsService;
 import io.github.senjar.bookstoreapp.security.JwtUtil;
 import io.github.senjar.bookstoreapp.service.impl.ShoppingCartServiceImpl;
@@ -52,6 +53,9 @@ public class ShoppingCartServiceTest {
 
     @Mock
     private CartItemRepository cartItemRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Mock
     private JwtUtil jwtUtil;
@@ -124,6 +128,19 @@ public class ShoppingCartServiceTest {
         ShoppingCartDto actual = shoppingCartService.showCartItems(userId);
 
         assertEquals(expectedCartDto.getUserId(), actual.getUserId());
+    }
+
+    @Test
+    @DisplayName("Should throw EntityNotFoundException when shopping cart is not found for user")
+    void showCartItems_cartNotFound_throwsEntityNotFoundException() {
+        Long userId = 1L;
+        when(shoppingCartRepository.findByUserId(userId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> shoppingCartService.showCartItems(userId));
+
+        verify(shoppingCartMapper, never()).toDto(any());
     }
 
     @Test
@@ -249,19 +266,21 @@ public class ShoppingCartServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw EntityNotFoundException when trying to add a non-existing book to cart")
-    void addToShoppingCart_invalidBookId_throwsEntityNotFoundException() {
+    @DisplayName("Should throw EntityNotFoundException when book does not exist")
+    void addToShoppingCart_bookNotFound_throwsException() {
         Long userId = 1L;
-        Long invalidBookId = 999L;
-        ItemRequestDto itemRequest = new ItemRequestDto(invalidBookId, 2);
+        Long bookId = 999L;
+        ItemRequestDto itemRequest = new ItemRequestDto(bookId, 2);
 
         ShoppingCart cart = mockCart(1L, mockUser(userId));
 
         when(shoppingCartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
-        when(bookRepository.findById(invalidBookId)).thenReturn(Optional.empty());
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class,
                 () -> shoppingCartService.addToShoppingCart(userId, itemRequest));
+
+        verify(cartItemRepository, never()).save(any());
     }
 
     private User mockUser(Long id) {

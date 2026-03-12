@@ -192,6 +192,24 @@ public class ShoppingCartControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("Should return 404 Not Found when adding non-existing book")
+    void addToShoppingCart_bookNotFound_returnsNotFound() throws Exception {
+        User user = mockUser(1L);
+        Long bookId = 999L;
+        ItemRequestDto requestDto = new ItemRequestDto(bookId, 2);
+
+        when(shoppingCartService.addToShoppingCart(user.getId(), requestDto))
+                .thenThrow(new EntityNotFoundException("Book not found"));
+
+        mockMvc.perform(post("/api/cart")
+                        .with(user(user))
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isNotFound());
+    }
+
     private User mockUser(Long id) {
         Role userRole = new Role();
         userRole.setName(RoleName.ROLE_USER);
