@@ -5,20 +5,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
-import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
-import io.github.senjar.bookstoreapp.dto.book.CategoryRequestDto;
-import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
-import io.github.senjar.bookstoreapp.mapper.BookMapper;
-import io.github.senjar.bookstoreapp.mapper.CategoryMapper;
-import io.github.senjar.bookstoreapp.model.book.Book;
-import io.github.senjar.bookstoreapp.model.book.Category;
-import io.github.senjar.bookstoreapp.repository.book.BookRepository;
-import io.github.senjar.bookstoreapp.repository.book.CategoryRepository;
-import io.github.senjar.bookstoreapp.service.impl.CategoryServiceImpl;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +18,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import io.github.senjar.bookstoreapp.dto.book.BookDtoWithoutCategoryIds;
+import io.github.senjar.bookstoreapp.dto.book.CategoryDto;
+import io.github.senjar.bookstoreapp.dto.book.CategoryRequestDto;
+import io.github.senjar.bookstoreapp.exception.EntityNotFoundException;
+import io.github.senjar.bookstoreapp.mapper.BookMapper;
+import io.github.senjar.bookstoreapp.mapper.CategoryMapper;
+import io.github.senjar.bookstoreapp.model.book.Book;
+import io.github.senjar.bookstoreapp.model.book.Category;
+import io.github.senjar.bookstoreapp.repository.book.BookRepository;
+import io.github.senjar.bookstoreapp.repository.book.CategoryRepository;
+import io.github.senjar.bookstoreapp.service.impl.CategoryServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Category Service Business Logic Tests")
@@ -168,10 +168,9 @@ class CategoryServiceTest {
         Long InvalidCategoryId = 999L;
         when(categoryRepository.existsById(InvalidCategoryId)).thenReturn(false);
 
-        EntityNotFoundException exception =
-                Assertions.assertThrows(EntityNotFoundException.class, () -> {
-                categoryService.deleteById(InvalidCategoryId);
-                });
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            categoryService.deleteById(InvalidCategoryId);
+        });
 
         verify(categoryRepository, never()).deleteById(InvalidCategoryId);
     }

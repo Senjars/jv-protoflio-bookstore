@@ -22,7 +22,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
         <jjwt.version>0.12.6</jjwt.version>
-        <testcontainers.version>1.19.3</testcontainers.version>
+        <testcontainers.version>1.20.6</testcontainers.version>
         <liquibase.version>4.27.0</liquibase.version>
     </properties>
 
@@ -31,8 +31,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers.version}</version>
-                <type>pom</type>
+                <version>${testcontainers.version}</version> <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
@@ -224,6 +223,15 @@
                 <version>${liquibase.version}</version>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <api.version>1.44</api.version>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
