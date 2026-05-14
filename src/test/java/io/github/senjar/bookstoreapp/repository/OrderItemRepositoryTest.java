@@ -7,14 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import io.github.senjar.bookstoreapp.config.BaseContainerTest;
 import io.github.senjar.bookstoreapp.model.order.OrderItem;
 import io.github.senjar.bookstoreapp.repository.order.OrderItemRepository;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 @DataJpaTest
 @DisplayName("Order Item Repository Integration Tests")
+@Import(TestcontainersConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class OrderItemRepositoryTest extends BaseContainerTest {
 

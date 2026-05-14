@@ -7,14 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import io.github.senjar.bookstoreapp.config.BaseContainerTest;
 import io.github.senjar.bookstoreapp.model.cart.ShoppingCart;
 import io.github.senjar.bookstoreapp.repository.shoppingcart.ShoppingCartRepository;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 @DataJpaTest
 @DisplayName("Shopping Cart Repository Integration Tests")
+@Import(TestcontainersConfiguration.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ShoppingCartRepositoryTest extends BaseContainerTest {
 
