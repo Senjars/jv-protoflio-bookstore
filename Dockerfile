@@ -6,7 +6,7 @@ RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn clean package -DskipTests -Dcheckstyle.skip
 
-# Stage 2 Run
+# Stage 2: Run
 FROM ghcr.io/graalvm/jdk-community:17
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
